@@ -139,9 +139,15 @@ After destroy I verified with the AWS CLI that no NAT gateways, Elastic IPs, EBS
 ## Not done (future work)
 
 - AWS WAF in front of the load balancer, AWS Network Firewall, and Ansible configuration management are not implemented. I understand the concepts but have not built them here.
-- Python health-check / reporting script.
 - A `prod` environment and a backup/DR runbook.
 
+## Health check script
+
+`scripts/health_check.py` uses boto3 to check that the EKS cluster and node groups are ACTIVE and that no CloudWatch alarms are firing. It exits non-zero on failure, so it can run from CI or a scheduled job.
+
+    pip install boto3
+    python scripts/health_check.py --cluster dev-eks --region eu-north-1
+    
 ## Cost note
 
 The stack was created for a short test session and destroyed afterwards. The only long-lived resource is the S3 state bucket created by `bootstrap/`. Never commit `terraform.tfvars`, `*.tfstate` or plan files (they are in `.gitignore`).
