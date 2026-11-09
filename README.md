@@ -110,3 +110,4 @@ After destroy I verified with the AWS CLI that no NAT gateways, Elastic IPs, EBS
 ## Cost note
 
 The stack was created for a short test session and destroyed afterwards. The only long-lived resource is the S3 state bucket created by `bootstrap/`. Never commit `terraform.tfvars`, `*.tfstate` or plan files (they are in `.gitignore`).
+![nginx welcome page served from EKS](docs/nginx-welcome.png)
