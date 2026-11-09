@@ -30,7 +30,7 @@ module "vpc" {
   azs                  = ["eu-north-1a", "eu-north-1b"]
   public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
   private_subnet_cidrs = ["10.0.11.0/24", "10.0.12.0/24"]
-  enable_nat_gateway   = false
+  enable_nat_gateway   = true
 
   tags                 = local.tags
   flow_log_kms_key_arn = aws_kms_key.logs.arn
