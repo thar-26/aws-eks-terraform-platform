@@ -43,3 +43,16 @@ output "account_id" {
 output "vpc_id" {
   value = module.vpc.vpc_id
 }
+
+module "ssm_instance" {
+  source = "../../modules/ssm_instance"
+
+  name      = "dev"
+  vpc_id    = module.vpc.vpc_id
+  subnet_id = module.vpc.private_subnet_ids[0]
+  tags      = local.tags
+}
+
+output "ssm_instance_id" {
+  value = module.ssm_instance.instance_id
+}
