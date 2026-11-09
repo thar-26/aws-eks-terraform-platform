@@ -17,6 +17,41 @@ A small, security-minded AWS platform built entirely with Terraform: a private-s
 | State | S3 remote backend with native locking (`use_lockfile = true`, no DynamoDB needed) |
 | CI | GitHub Actions: `terraform fmt -check`, `init`, `validate`, and Checkov security scan |
 
+## Architecture
+
+```mermaid
+flowchart TB
+    user([Admin laptop<br/>allow-listed /32]) -->|kubectl, HTTPS| eksapi[EKS API endpoint]
+    internet([Internet]) --> igw[Internet Gateway]
+
+    subgraph vpc [VPC 10.0.0.0/16 - eu-north-1]
+        subgraph pub [Public subnets x2]
+            nat[NAT Gateway]
+            elb[Load balancer<br/>created by Kubernetes]
+        end
+        subgraph priv [Private subnets x2]
+            nodes[EKS managed nodes<br/>2x t3.small]
+            ssm[EC2 instance<br/>SSM only, no SSH]
+        end
+        s3ep[S3 gateway endpoint]
+    end
+
+    igw --> elb
+    elb --> nodes
+    nodes -->|outbound| nat
+    nat --> igw
+    nodes --> s3ep
+    eksapi --- nodes
+
+    ecr[(ECR<br/>immutable tags)] -.->|image pull| nodes
+    kms{{KMS key<br/>rotation on}} -.-> ecr
+    kms -.-> logs
+    vpc -->|flow logs| logs[CloudWatch Logs]
+    eksapi -->|control-plane logs| logs
+    logs --> alarms[CloudWatch alarms<br/>and dashboard]
+    alarms --> sns[SNS email alerts]
+    tfstate[(S3 state bucket<br/>native locking)] -.- tf[Terraform]
+```
 ## Repository layout
 
 ```
