@@ -29,3 +29,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "enable_nat_gateway" {
+  description = "Create a NAT Gateway (costs money per hour)"
+  type        = bool
+  default     = true
+}
