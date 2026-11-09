@@ -14,6 +14,14 @@ provider "aws" {
 
 data "aws_caller_identity" "current" {}
 
+locals {
+  tags = {
+    Environment = "dev"
+    Project     = "aws-eks-terraform-platform"
+    ManagedBy   = "terraform"
+  }
+}
+
 module "vpc" {
   source = "../../modules/vpc"
 
@@ -24,11 +32,8 @@ module "vpc" {
   private_subnet_cidrs = ["10.0.11.0/24", "10.0.12.0/24"]
   enable_nat_gateway   = false
 
-  tags = {
-    Environment = "dev"
-    Project     = "aws-eks-terraform-platform"
-    ManagedBy   = "terraform"
-  }
+  tags                 = local.tags
+  flow_log_kms_key_arn = aws_kms_key.logs.arn
 }
 
 output "account_id" {

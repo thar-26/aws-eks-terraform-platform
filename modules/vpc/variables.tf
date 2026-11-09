@@ -35,3 +35,15 @@ variable "enable_nat_gateway" {
   type        = bool
   default     = true
 }
+
+variable "flow_log_retention_days" {
+  description = "Days to keep VPC flow logs"
+  type        = number
+  default     = 14
+}
+
+variable "flow_log_kms_key_arn" {
+  description = "KMS key ARN to encrypt the flow log group (null = AWS default)"
+  type        = string
+  default     = null
+}
